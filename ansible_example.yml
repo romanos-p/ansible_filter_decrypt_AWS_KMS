@@ -1,0 +1,38 @@
+---
+
+- hosts: "{{ cluster_mongodb_host_names | random }}" # connect to a random host in the cluster
+  gather_facts: false
+  vars_files:
+    - aws-creds/kms_vault.yml # AWS KMS credentials here encrypted with ansible vault
+  vars:
+    kmsenv: "{{ aws_kms_user_envars }}"             # assign to short var name to AWS KMS credentials from vault
+    cluster_mongodb_hostnames: ["host1", "host2"]   # a list of hosts in the mongodb cluster
+    cluster_mongodb_user: "user"                    # username for mongodb
+    cluster_mongodb_password: "pass"                # password for mongodb
+    cluster_mongodb_port: "1234"                    # port where the mongodb is listenning on
+    cluster_mongodb_database: "dbname"              # mongodb database name
+    cluster_mongodb_collection: "collname"          # mongodb collection name
+    object_id: "1"                                  # object id to retrieve from mongodb
+  tasks:
+    - name: Pull json object from mongodb
+      community.mongodb.mongodb_shell:
+        login_user: "{{ cluster_mongodb_user }}"
+        login_password: "{{ cluster_mongodb_password }}"
+        login_port: "{{ cluster_mongodb_port }}"
+        db: "{{ cluster_mongodb_database }}"
+        eval: "db.getCollection('{{ cluster_mongodb_collection }}').find({'_id': '{{ object_id }}' })"
+        transform: "json"
+      no_log: true
+      register: json_object
+
+    - name: Print object ID
+      debug:
+        msg: "retrieved object id is: {{ json_object.transformed_output._id }}"
+
+    - name: Print object secret field unencrypted
+      debug:
+        msg: "retrieved object secret is: {{ json_object.transformed_output.secret | decryptstring(kmsenv) }}"
+
+    - name: Print entire object with all encrypted fields unencrypted
+      debug:
+        msg: "retrieved object is: {{ json_object.transformed_output | decryptjson(kmsenv) }}"
