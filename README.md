@@ -4,7 +4,7 @@ A set of 3 ansible filters to decrypt json objects (recursively), lists and stri
 ## Use Case
 Some data about your infrastructure is stored in a mongoDB including some sensitive pieces of information.\
 This could be data describing a website and the sensitive data credentials for AWS S3 and a MySQL database.\
-Using ansible vault would be a problem because you also use this data in a web app where users can view and update site information.\
+Using ansible vault would be a problem because you also use this data in a web app where users can view and update site information.
 
 ## Contents
 ```
