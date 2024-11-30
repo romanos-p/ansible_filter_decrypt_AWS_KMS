@@ -17,14 +17,14 @@ kms_crypt.py            # python cli tool to encrypt and decrypt strings
 ```
 
 ## Requirements
-python3
-python modules:
-  - botocore
-  - boto3
-  - ansible-core
-  - ansible
-AWS account with an asymmetric key pair in KMS
-AWS access credentials with permissions to kms:ListKeys, kms:Encrypt, kms:Decrypt.
+* python3
+* python modules:
+    * botocore
+    * boto3
+    * ansible-core
+    * ansible
+* AWS account with an asymmetric key pair in KMS\
+* AWS access credentials with permissions to kms:ListKeys, kms:Encrypt, kms:Decrypt.
 
 ## Setup & Notes
 The key used is an RSA anymetric key pair. The encryption algorithm is RSAES-OAEP with SHA256 for the MGF and hash function.\
